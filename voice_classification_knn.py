@@ -1,14 +1,14 @@
-import os.path
+import os
 import csv
 import time
 import numpy as np
 import pandas as pd
-from sklearn import metrics
-from sklearn.decomposition import PCA
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics
+from voice_utils import print_result
 
 
-data_dir = 'F:/GoogleDriver/Feature/'
+data_dir = './input_data/'
 
 
 # 加载数据
@@ -18,8 +18,6 @@ def opencsv():
     data1 = pd.read_csv(os.path.join(data_dir, 'test.csv'))
 
     train_data = data.values[0:, 1:]  # 读入全部训练数据,  [行，列]
-    #train_data = data.values[0:, 1:]  # 读入全部训练数据,  [行，列]
-    #print(train_data)
     train_label = data.values[0:, 0]  # 读取列表的第一列
     test_data = data1.values[0:, 1:]  # 测试全部测试个数据
     test_lable = data1.values[0:, 0]
@@ -44,45 +42,15 @@ def knnClassify(trainData, trainLabel, k_value):
     knnClf.fit(trainData, np.ravel(trainLabel))  # ravel Return a contiguous flattened array.
     return knnClf
 
-
-# 数据预处理-降维 PCA主成成分分析
-def dRPCA(x_train, x_test, COMPONENT_NUM):
-    print('dimensionality reduction...')
-    trainData = np.array(x_train)
-    testData = np.array(x_test)
-    '''
-    使用说明：https://www.cnblogs.com/pinard/p/6243025.html
-    n_components>=1
-      n_components=NUM   设置占特征数量比
-    0 < n_components < 1
-      n_components=0.99  设置阈值总方差占比
-    '''
-    pca = PCA(n_components=COMPONENT_NUM, whiten=False)
-    pca.fit(trainData)  # Fit the model with X
-    pcaTrainData = pca.transform(trainData)  # Fit the model with X and 在X上完成降维.
-    pcaTestData = pca.transform(testData)  # Fit the model with X and 在X上完成降维.
-
-    # pca 方差大小、方差占比、特征数量
-    print(pca.explained_variance_, '\n', pca.explained_variance_ratio_, '\n',
-          pca.n_components_)
-    print(sum(pca.explained_variance_ratio_))
-    return pcaTrainData, pcaTestData
-
-
 def dRecognition_knn():
     start_time = time.time()
 
     # 加载数据
     trainData, trainLabel, testData, TestLabel = opencsv()
-    # print("trainData==>", type(trainData), shape(trainData))
-    # print("trainLabel==>", type(trainLabel), shape(trainLabel))
-    # print("testData==>", type(testData), shape(testData))
     print("load data finish")
     stop_time_l = time.time()
     print('load data time used:%f' % (stop_time_l - start_time))
 
-    # 降维处理
-    #trainData, testData = dRPCA(trainData, testData, 0.8)
 
     for i in range(1, 10):
         # 模型训练
@@ -95,7 +63,6 @@ def dRecognition_knn():
         print('Accuracy : %f' % (score))
 
     # 结果的输出
-    #saveResult(testLabel, os.path.join(data_dir, 'Result_sklearn_knn.csv'))
     print("finish!")
     stop_time_r = time.time()
     print('classify time used:%f' % (stop_time_r - start_time))
@@ -103,14 +70,7 @@ def dRecognition_knn():
     #k=1时，报告分析↓
     knnClf = knnClassify(trainData, trainLabel, 1)
     testLabel = knnClf.predict(testData)
-    score = metrics.accuracy_score(TestLabel, testLabel)
-    print('Accuracy : %f' % (score))
-    print(metrics.classification_report(TestLabel, testLabel))
-    CMatrix = metrics.confusion_matrix(TestLabel, testLabel)
-    from voice_utils import plot_confusion_matrix
-    plot_confusion_matrix(CMatrix, title="KNN Confusion Matrix",
-                          classes=['Anger', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise'])
-
+    print_result(TestLabel, testLabel, "KNN Confusion Matrix")
 
 if __name__ == '__main__':
     dRecognition_knn()

@@ -5,7 +5,6 @@ from sklearn import metrics
 
 features = ['Anger', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise']
 
-
 def plot_confusion_matrix(cm, classes=features,
 						  normalize=False,
 						  title='Confusion matrix',

@@ -5,15 +5,11 @@ from sklearn import metrics
 
 features = ['Anger', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise']
 
-
 def plot_confusion_matrix(cm, classes=features,
 						  normalize=False,
 						  title='Confusion matrix',
 						  cmap="Blues"):
-	"""
-	This function prints and plots the confusion matrix.
-	Normalization can be applied by setting `normalize=True`.
-	"""
+
 	plt.imshow(cm, interpolation='nearest', cmap=cmap)
 	plt.title(title)
 	plt.colorbar()
@@ -65,5 +61,4 @@ def print_result(y_test, y_predict, title):
 	print('Report : \n', report)
 	# 显示交叉验证数据集报告
 	print('Confusion Matrix : \n', CMatrix)
-	plot_confusion_matrix(CMatrix, title=title,
-						  classes=['Anger', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise'])
+	plot_confusion_matrix(CMatrix, title=title)

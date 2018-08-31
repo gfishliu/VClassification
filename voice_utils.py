@@ -5,11 +5,11 @@ from sklearn import metrics
 
 features = ['Anger', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise']
 
+
 def plot_confusion_matrix(cm, classes=features,
 						  normalize=False,
 						  title='Confusion matrix',
 						  cmap="Blues"):
-
 	plt.imshow(cm, interpolation='nearest', cmap=cmap)
 	plt.title(title)
 	plt.colorbar()
